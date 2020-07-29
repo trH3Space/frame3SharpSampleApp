@@ -7,6 +7,8 @@ using gs;
 
 public class ObjectsDemoSceneConfig : BaseSceneConfig
 {
+    private const bool IncludeDefaultObjects = false;
+
     FContext context;
     public override FContext Context { get { return context; } }
 
@@ -22,7 +24,7 @@ public class ObjectsDemoSceneConfig : BaseSceneConfig
         // set up some defaults
         SceneGraphConfig.DefaultSceneCurveVisualDegrees = 0.5f;
         SceneGraphConfig.DefaultPivotVisualDegrees = 1.5f;
-        SceneGraphConfig.DefaultAxisGizmoVisualDegrees = 10.0f;
+        SceneGraphConfig.DefaultAxisGizmoVisualDegrees = 15.0f;
 
 
         SceneOptions options = new SceneOptions();
@@ -61,47 +63,50 @@ public class ObjectsDemoSceneConfig : BaseSceneConfig
 
 
 
-        /*
-         * Import elements of Unity scene that already exist into the FScene
-         */
+        
+        // Import some elements of Unity scene that already exist into the FScene
 
         // set up ground plane geometry (optional)
         GameObject groundPlane = GameObject.Find("GroundPlane");
         context.Scene.AddWorldBoundsObject(groundPlane);
 
-
-        Sphere3Generator_NormalizedCube gen = new Sphere3Generator_NormalizedCube() {
+        Sphere3Generator_NormalizedCube gen = new Sphere3Generator_NormalizedCube()
+        {
             Radius = 1.0f
         };
         DMeshSO meshSO = new DMeshSO();
         meshSO.Create(gen.Generate().MakeDMesh(), Context.Scene.DefaultMeshSOMaterial);
         Context.Scene.AddSceneObject(meshSO);
 
-        //SceneObject focusSO = null;
+        SceneObject focusSO = null;
 
-        // convert a mesh GameObject to our DMeshSO
-        // Note: any child GameObjects will be lost
-        GameObject meshGO = GameObject.Find("bunny_mesh");
-        if (meshGO != null) {
-            //DMeshSO meshSO = UnitySceneUtil.WrapMeshGameObject(meshGO, context, true) as DMeshSO;
-            UnitySceneUtil.WrapMeshGameObject(meshGO, context, true);
+        if(IncludeDefaultObjects)
+        {
+            // convert a mesh GameObject to our DMeshSO
+            // Note: any child GameObjects will be lost
+            GameObject meshGO = GameObject.Find("bunny_mesh");
+            if (meshGO != null)
+            {
+                //DMeshSO meshSO = UnitySceneUtil.WrapMeshGameObject(meshGO, context, true) as DMeshSO;
+                focusSO = UnitySceneUtil.WrapMeshGameObject(meshGO, context, true);
+            }
+
+            GameObject meshGO2 = GameObject.Find("bunny_mesh2");
+            if (meshGO2 != null)
+            {
+                //DMeshSO meshSO = UnitySceneUtil.WrapMeshGameObject(meshGO, context, true) as DMeshSO;
+                UnitySceneUtil.WrapMeshGameObject(meshGO2, context, true);
+            }
         }
 
-        GameObject meshGO2 = GameObject.Find("bunny_mesh2");
-        if (meshGO2 != null) {
-            //DMeshSO meshSO = UnitySceneUtil.WrapMeshGameObject(meshGO, context, true) as DMeshSO;
-            UnitySceneUtil.WrapMeshGameObject(meshGO2, context, true);
+        // center the camera on the selected scene object
+        if (focusSO != null)
+        {
+            Vector3f centerPt = focusSO.GetLocalFrame(CoordSpace.WorldCoords).Origin;
+            context.ActiveCamera.Manipulator().ScenePanFocus(
+                context.Scene, context.ActiveCamera, centerPt, true);
         }
-
-        //// center the camera on the capsule assembly
-        //if (focusSO != null) {
-        //    Vector3f centerPt = focusSO.GetLocalFrame(CoordSpace.WorldCoords).Origin;
-        //    context.ActiveCamera.Manipulator().ScenePanFocus(
-        //        context.Scene, context.ActiveCamera, centerPt, true);
-        //}
 
     }
-
-
 
 }
