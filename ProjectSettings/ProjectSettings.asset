@@ -341,9 +341,8 @@ PlayerSettings:
     m_Enabled: 0
     m_Devices: []
   - m_BuildTarget: Standalone
-    m_Enabled: 1
-    m_Devices:
-    - OpenVR
+    m_Enabled: 0
+    m_Devices: []
   - m_BuildTarget: Tizen
     m_Enabled: 0
     m_Devices: []
@@ -616,7 +615,7 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLDecompressionFallback: 0
   scriptingDefineSymbols:
-    1: G3_USING_UNITY
+    1: G3_USING_UNITY;F3_NO_VR_SUPPORT
   platformArchitecture: {}
   scriptingBackend:
     Standalone: 0
