@@ -27,7 +27,7 @@ class SetupObjectsDemoCockpit : ICockpitInitializer
 
 
         float pixelScale = cockpit.GetPixelScale();
-        float buttonDiam = 150 * pixelScale;
+        float buttonDiam = 45 * pixelScale;
 
         HUDElementList primitives_list = new HUDElementList() {
             Width = 5*buttonDiam,
