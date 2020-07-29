@@ -32,3 +32,6 @@ Data/PhotoSets/brackets/
 Data/PhotoSets/sort_demo/
 Data/PhotoSets/boys/
 .vs/
+
+# Mac specific
+.DS_Store
