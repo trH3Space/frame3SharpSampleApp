@@ -3,7 +3,7 @@
 	url = https://github.com/gradientspace/geometry3Sharp
 [submodule "Assets/frame3Sharp"]
 	path = Assets/frame3Sharp
-	url = https://github.com/gradientspace/frame3Sharp
+	url = https://github.com/trH3Space/frame3Sharp
 [submodule "Assets/gsUnityVR"]
 	path = Assets/gsUnityVR
 	url = https://github.com/gradientspace/gsUnityVR
