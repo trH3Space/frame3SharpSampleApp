@@ -78,6 +78,10 @@ public class ObjectsDemoSceneConfig : BaseSceneConfig
         meshSO.Create(gen.Generate().MakeDMesh(), Context.Scene.DefaultMeshSOMaterial);
         Context.Scene.AddSceneObject(meshSO);
 
+        var box = new BoxSO();
+        box.Create(Context.Scene.DefaultMeshSOMaterial);
+        Context.Scene.AddSceneObject(box);
+
         SceneObject focusSO = null;
 
         if(IncludeDefaultObjects)
