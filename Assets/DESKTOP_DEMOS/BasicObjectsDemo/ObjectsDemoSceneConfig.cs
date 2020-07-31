@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using f3;
 using g3;
 using gs;
+using UnityEngine.ProBuilder;
+using System.Linq;
 
 public class ObjectsDemoSceneConfig : BaseSceneConfig
 {
@@ -11,6 +13,16 @@ public class ObjectsDemoSceneConfig : BaseSceneConfig
 
     FContext context;
     public override FContext Context { get { return context; } }
+
+
+    /// <summary>
+    /// Data for testing capabilities
+    /// </summary>
+    private class TestData
+    {
+        public ProBuilderMesh proBuilderMesh;
+    }
+    private TestData _test = new TestData();
 
 
     // Use this for initialization
@@ -70,47 +82,68 @@ public class ObjectsDemoSceneConfig : BaseSceneConfig
         GameObject groundPlane = GameObject.Find("GroundPlane");
         context.Scene.AddWorldBoundsObject(groundPlane);
 
-        Sphere3Generator_NormalizedCube gen = new Sphere3Generator_NormalizedCube()
+        //Sphere3Generator_NormalizedCube gen = new Sphere3Generator_NormalizedCube()
+        //{
+        //    Radius = 1.0f
+        //};
+        //DMeshSO meshSO = new DMeshSO();
+        //meshSO.Create(gen.Generate().MakeDMesh(), Context.Scene.DefaultMeshSOMaterial);
+        //Context.Scene.AddSceneObject(meshSO);
+
+        //var box = new BoxSO();
+        //box.Create(Context.Scene.DefaultMeshSOMaterial);
+        //Context.Scene.AddSceneObject(box);
+
+        //SceneObject focusSO = null;
+
+        //if(IncludeDefaultObjects)
+        //{
+        //    // convert a mesh GameObject to our DMeshSO
+        //    // Note: any child GameObjects will be lost
+        //    GameObject meshGO = GameObject.Find("bunny_mesh");
+        //    if (meshGO != null)
+        //    {
+        //        //DMeshSO meshSO = UnitySceneUtil.WrapMeshGameObject(meshGO, context, true) as DMeshSO;
+        //        focusSO = UnitySceneUtil.WrapMeshGameObject(meshGO, context, true);
+        //    }
+
+        //    GameObject meshGO2 = GameObject.Find("bunny_mesh2");
+        //    if (meshGO2 != null)
+        //    {
+        //        //DMeshSO meshSO = UnitySceneUtil.WrapMeshGameObject(meshGO, context, true) as DMeshSO;
+        //        UnitySceneUtil.WrapMeshGameObject(meshGO2, context, true);
+        //    }
+        //}
+
+        //// center the camera on the selected scene object
+        //if (focusSO != null)
+        //{
+        //    Vector3f centerPt = focusSO.GetLocalFrame(CoordSpace.WorldCoords).Origin;
+        //    context.ActiveCamera.Manipulator().ScenePanFocus(
+        //        context.Scene, context.ActiveCamera, centerPt, true);
+        //}
+
+
+        // ProBuilder objects
+        var generated = UnityEngine.ProBuilder.ShapeGenerator.GenerateCube(UnityEngine.ProBuilder.PivotLocation.Center, Vector3.one * 3);
+        UnitySceneUtil.WrapMeshGameObject(generated.gameObject, context, true);
+
+        GameObject existingObject = GameObject.Find("ProBuilderShape1");
+        UnitySceneUtil.WrapMeshGameObject(existingObject, context, false);
+        _test.proBuilderMesh = existingObject.GetComponent<ProBuilderMesh>();
+    }
+
+
+    void OnGUI()
+    {
+        if (GUILayout.Button("Shift Face"))
         {
-            Radius = 1.0f
-        };
-        DMeshSO meshSO = new DMeshSO();
-        meshSO.Create(gen.Generate().MakeDMesh(), Context.Scene.DefaultMeshSOMaterial);
-        Context.Scene.AddSceneObject(meshSO);
+            var mesh = _test.proBuilderMesh;
 
-        var box = new BoxSO();
-        box.Create(Context.Scene.DefaultMeshSOMaterial);
-        Context.Scene.AddSceneObject(box);
-
-        SceneObject focusSO = null;
-
-        if(IncludeDefaultObjects)
-        {
-            // convert a mesh GameObject to our DMeshSO
-            // Note: any child GameObjects will be lost
-            GameObject meshGO = GameObject.Find("bunny_mesh");
-            if (meshGO != null)
-            {
-                //DMeshSO meshSO = UnitySceneUtil.WrapMeshGameObject(meshGO, context, true) as DMeshSO;
-                focusSO = UnitySceneUtil.WrapMeshGameObject(meshGO, context, true);
-            }
-
-            GameObject meshGO2 = GameObject.Find("bunny_mesh2");
-            if (meshGO2 != null)
-            {
-                //DMeshSO meshSO = UnitySceneUtil.WrapMeshGameObject(meshGO, context, true) as DMeshSO;
-                UnitySceneUtil.WrapMeshGameObject(meshGO2, context, true);
-            }
+            mesh.TranslateVertices(Enumerable.Range(0, 4), Vector3.left);
+            mesh.ToMesh();
+            mesh.Refresh();
         }
-
-        // center the camera on the selected scene object
-        if (focusSO != null)
-        {
-            Vector3f centerPt = focusSO.GetLocalFrame(CoordSpace.WorldCoords).Origin;
-            context.ActiveCamera.Manipulator().ScenePanFocus(
-                context.Scene, context.ActiveCamera, centerPt, true);
-        }
-
     }
 
 }
