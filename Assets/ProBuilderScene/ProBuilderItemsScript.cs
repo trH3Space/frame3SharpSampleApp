@@ -56,6 +56,16 @@ public class ProBuilderItemsScript : MonoBehaviour
                 _mesh.Refresh();
             }
         }
+        if (GUILayout.Button("Extrude faces"))
+        {
+            var selectedFaces = this.selectedFaces();
+            if (selectedFaces.Count() > 0)
+            {
+                ExtrudeElements.Extrude(_mesh, selectedFaces, ExtrudeMethod.FaceNormal, 0.5f);
+                _mesh.ToMesh();
+                _mesh.Refresh();
+            }
+        }
         if (GUILayout.Button("Clear selection"))
         {
             clearSelection();
