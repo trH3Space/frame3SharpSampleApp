@@ -31,6 +31,7 @@ public class ProBuilderItemsScript : MonoBehaviour
         
     }
 
+
     // Update is called once per frame
     void Update()
     {
@@ -40,6 +41,7 @@ public class ProBuilderItemsScript : MonoBehaviour
             selectFace(pickFace);
         }
     }
+
 
     void OnGUI()
     {
@@ -66,6 +68,16 @@ public class ProBuilderItemsScript : MonoBehaviour
                 _mesh.Refresh();
             }
         }
+        if (GUILayout.Button("Move face vertices"))
+        {
+            var selectedVertices = this.selectedVertices();
+            if (selectedVertices.Count() > 0)
+            {
+                VertexPositioning.TranslateVertices(_mesh, selectedVertices, Vector3.right * 0.3f);
+                _mesh.ToMesh();
+                _mesh.Refresh();
+            }
+        }
         if (GUILayout.Button("Clear selection"))
         {
             clearSelection();
@@ -73,6 +85,7 @@ public class ProBuilderItemsScript : MonoBehaviour
         if (GUILayout.Button("Reset"))
         {
             makeCube();
+            clearSelection();
         }
     }
 
@@ -84,16 +97,19 @@ public class ProBuilderItemsScript : MonoBehaviour
             Object.DestroyImmediate(_mesh.gameObject);
         }
 
-        var generated = ShapeGenerator.GenerateCube(UnityEngine.ProBuilder.PivotLocation.Center, Vector3.one * 5);
+        var generated = ShapeGenerator.GenerateCube(PivotLocation.Center, Vector3.one * 5);
         generated.transform.localPosition = new Vector3(0, 2.5f, 0);
 
-        generated.GetComponent<MeshRenderer>().sharedMaterials = new Material[2]
+        var renderer = generated.GetComponent<MeshRenderer>();
+        renderer.sharedMaterials = new Material[2]
         {
             CubeMaterial,
             SelectionMaterial
         };
 
         _mesh = generated;
+        _mesh.ToMesh();
+        _mesh.Refresh();
     }
 
     private void selectFace(Face face)
@@ -107,23 +123,31 @@ public class ProBuilderItemsScript : MonoBehaviour
         }
     }
 
+
     private IEnumerable<Face> selectedFaces()
     {
         return _mesh.faces.Where(f => f.submeshIndex == 1);
     }
 
+
+    private IEnumerable<int> selectedVertices()
+    {
+        var selected = new HashSet<int>();
+        foreach(var face in selectedFaces())
+        {
+            selected.UnionWith(face.indexes);
+        }
+        return selected;
+    }
+
+
     private void clearSelection()
     {
-        bool hadSelected = false;
         foreach (var iFace in _mesh.faces)
         {
-            hadSelected |= iFace.submeshIndex != 0;
             iFace.submeshIndex = 0;
         }
-        if(hadSelected)
-        {
-            _mesh.ToMesh();
-            _mesh.Refresh();
-        }
+        _mesh.ToMesh();
+        _mesh.Refresh();
     }
 }
